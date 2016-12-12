@@ -1,0 +1,5 @@
+0,0
+1,0
+2,0
+T=1
+o_file=./tests/output.txt
