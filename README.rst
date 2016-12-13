@@ -3,15 +3,15 @@ MCMC
 ===============================
 
 
-.. image:: https://img.shields.io/travis/mchakra2/mcmc.svg
-        :target: https://travis-ci.org/mchakra2/mcmc
+.. image:: https://img.shields.io/travis/mchakra2/parallelmcmc.svg
+        :target: https://travis-ci.org/mchakra2/parallelmcmc
 
-.. image:: https://pyup.io/repos/github/mchakra2/mcmc/shield.svg
-	:target: https://pyup.io/repos/github/mchakra2/mcmc/
+.. image:: https://pyup.io/repos/github/mchakra2/parallelmcmc/shield.svg
+	:target: https://pyup.io/repos/github/mchakra2/parallelmcmc/
 	:alt: Updates
 
-.. image:: https://coveralls.io/repos/github/mchakra2/mcmc/badge.svg
-        :target: https://coveralls.io/github/mchakra2/mcmc
+.. image:: https://coveralls.io/repos/github/mchakra2/parallelmcmc/badge.svg
+        :target: https://coveralls.io/github/mchakra2/parallelmcmc
 
 
 

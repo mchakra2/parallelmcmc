@@ -6,6 +6,7 @@ import graphviz as gz
 import numpy as np
 import os
 import timeit
+import joblib
 
 class MarkovChain:
     input_f='./IOFiles/input.txt'#default input file location
