@@ -142,6 +142,10 @@ class TestMcmc(unittest.TestCase):
         self.assertLessEqual(self.m.exp_edgs,max_edges)#number of edges should be less than or equal to M(M-1)/2 where M is the number of nodes
         self.assertGreater(self.m.exp_d0,0)#to check that at least one or more edges are connected to node 0
         self.assertLessEqual(self.m.exp_d0,nodes-1)#deg of vertex 0 should not me more than M-1
+        #To check that the output file is not empty
+        flag = os.path.exists(self.m.o_file)
+        self.assertTrue(flag)
+
         #self.m.G1.clear()
         #self.m.G2.clear()
 

@@ -8,6 +8,7 @@ import os
 import timeit
 import multiprocessing
 import random
+from collections import Counter
 #from joblib import Parallel, delayed #For parallelization
 from multiprocessing import Pool,Value
 class MarkovChain:
@@ -23,7 +24,7 @@ class MarkovChain:
     exp_d0=0.0#Expectation of degree of vertex 0
     exp_edgs=0.0#Expectation of number of edges
     exp_max_path=0.0#Expection of the maximum value of minimum paths
-
+    process_num = multiprocessing.cpu_count()#Default number of CPUs to be used
     def main(self):
         start_time = timeit.default_timer()
         #Clear G1 and G2 in case they are not empty
@@ -35,21 +36,21 @@ class MarkovChain:
         self.exp_d0=0#Expectation of degree of vertex 0
         self.exp_edgs=0
         self.exp_max_path=0
-        np = multiprocessing.cpu_count()
-        print ('Number of CPUs to be used:  {0:1d}'.format(np))
-        process_iter=[int(self.iterations/np) for i in range(np)]#Number of interations for each processes
-        print(process_iter)
+        print ('Number of processors to be used:  {0:1d}'.format(self.process_num))
+        process_iter=[int(self.iterations/self.process_num) for i in range(self.process_num)]#Number of interations for each processes
+        
         #Creating the worker pool
-        pool = Pool(processes=np)   
+        pool = Pool(processes=self.process_num)   
         # parallel map
         results=pool.map(self.mc_chain_generator, process_iter)#this is a list of tuples returned from the parallel operation
         for i in range(len(results)):
             self.exp_d0+=results[i][0]
             self.exp_max_path+=results[i][1]
             self.exp_edgs+=results[i][2]
-            #unique_graphs
+            '''Counter is a subclass of dictionary which adds up numerical values of 
+            common keys while merging two dictionaries'''
+            self.uniques=Counter(self.uniques)+Counter(results[i][3])
         print('test',self.test)
-        #d0, E and avg_path are for calculating the expectations from the sum of these attributes over the period of simulation
         self.exp_d0=float(self.exp_d0)/self.iterations
         self.exp_edgs=float(self.exp_edgs)/self.iterations
         self.exp_max_path=float(self.exp_max_path)/self.iterations
@@ -57,9 +58,9 @@ class MarkovChain:
         print('The expected number of edges in the entire graph ',self.exp_edgs)
         print('The expected maximum distance of the shortest path in a graph that connects vertex 0 to another vertex',self.exp_max_path)
         print('The number of unique graphs ',len(self.uniques))
-        #self.quantiling()
+        self.quantiling(self.uniques)
         elapsed = timeit.default_timer() - start_time
-        print(elapsed)
+        print("The time to execute the code is:",elapsed)
         #return(self.exp_d0,E,avg_path)
     
    
@@ -97,6 +98,8 @@ class MarkovChain:
                         elif li.split("=")[0]=='iterations':
                             self.iterations=int(li.split("=")[1])
                             print(self.iterations)
+                        elif li.split("=")[0]=='process_num':
+                            self.process_num=int(li.split("=")[1])
 
                 else:
                     tmp = line.split(",")
@@ -241,17 +244,18 @@ class MarkovChain:
         It returns a list of edge-list of top 1% graphs generated in the markov chain'''
         print('The edge lists of the top 1% graphs are printed in ', self.o_file)
         f=open(self.o_file,"w")#Writing into the output file
-        
         desc_adj=sorted(dictionary.items(), key=itemgetter(1), reverse=True)
         top=0.01*len(dictionary)
         top_graphs=[]
         if top<1:
             print('Since there are less than 100 unique graphs, only the most likely graph will be written in the output file')
+            #top_graphs.append(dictionary[0][0])
             top_graphs.append(desc_adj[0][0])
             f.write("%s\n"%top_graphs[0])
         else:
             i=0
             while(i<=round(top,0)-1):
+                #top_graphs.append(dictionary[i][0])
                 top_graphs.append(desc_adj[i][0])
                 f.write("%s\n"%top_graphs[i])
                 i+=1
@@ -259,9 +263,6 @@ class MarkovChain:
         f.close()
         return(top_graphs)
 
-if __name__ == '__main__':
-    m=MarkovChain()
-    m.main()
 
 
 

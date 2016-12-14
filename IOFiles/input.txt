@@ -6,3 +6,4 @@
 5,5
 1,1
 iterations=10000
+process_num=8
